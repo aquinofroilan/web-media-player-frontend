@@ -7,13 +7,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   FileVideo, 
   Film, 
   AlertCircle, 
   RefreshCw,
   Check,
-  FolderOpen
+  FolderOpen,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 
 function getExtensionIcon(extension: string) {
@@ -157,64 +160,93 @@ export default function FileList({
   selectedFile, 
   onSelectFile, 
   isLoading, 
-  error 
+  error,
+  isOpen = true,
+  onOpenChange
 }: FileListProps & { onRetry?: () => void }) {
   if (isLoading) {
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Media Files</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <LoadingState />
-        </CardContent>
-      </Card>
+      <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+        <Card className="h-full">
+          <CardHeader className="pb-3">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto hover:bg-transparent">
+                <CardTitle className="text-lg">Media Files</CardTitle>
+                {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </Button>
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="p-0">
+              <LoadingState />
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
     );
   }
 
   if (error) {
     return (
-      <Card className="h-full">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Media Files</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ErrorState message={error} />
-        </CardContent>
-      </Card>
+      <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+        <Card className="h-full">
+          <CardHeader className="pb-3">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto hover:bg-transparent">
+                <CardTitle className="text-lg">Media Files</CardTitle>
+                {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </Button>
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="p-0">
+              <ErrorState message={error} />
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
     );
   }
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Media Files</CardTitle>
-          <Badge variant="secondary">{files.length} files</Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 p-0 min-h-0">
-        {files.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <ScrollArea className="h-full">
-            <div 
-              className="p-4 pt-0 space-y-2"
-              role="listbox"
-              aria-label="Media files"
-            >
-              {files.map((file) => (
-                <FileItem
-                  key={file.filename}
-                  file={file}
-                  isSelected={selectedFile?.filename === file.filename}
-                  onSelect={() => onSelectFile(file)}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-      </CardContent>
-    </Card>
+    <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+      <Card className={cn("flex flex-col", isOpen ? "h-full" : "h-auto")}>
+        <CardHeader className="pb-3 flex-shrink-0">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between p-0 h-auto hover:bg-transparent">
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-lg">Media Files</CardTitle>
+                <Badge variant="secondary">{files.length} files</Badge>
+              </div>
+              {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+        </CardHeader>
+        <CollapsibleContent className="flex-1 min-h-0">
+          <CardContent className="flex-1 p-0 min-h-0 h-full">
+            {files.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <ScrollArea className="h-full">
+                <div 
+                  className="p-4 pt-0 space-y-2"
+                  role="listbox"
+                  aria-label="Media files"
+                >
+                  {files.map((file) => (
+                    <FileItem
+                      key={file.filename}
+                      file={file}
+                      isSelected={selectedFile?.filename === file.filename}
+                      onSelect={() => onSelectFile(file)}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }

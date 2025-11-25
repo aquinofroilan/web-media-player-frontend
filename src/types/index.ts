@@ -59,6 +59,8 @@ export interface FileListProps {
   onSelectFile: (file: MediaFile) => void;
   isLoading: boolean;
   error: string | null;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export interface VideoPlayerProps {

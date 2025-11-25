@@ -25,18 +25,10 @@ export default function Home() {
   } = useMediaFiles();
 
   const [playerError, setPlayerError] = useState<string | null>(null);
+  const [isFileListOpen, setIsFileListOpen] = useState(true);
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
-      <header className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Web Media Player
-        </h1>
-        <p className="text-muted-foreground text-sm md:text-base mt-1">
-          Stream your media files with ease
-        </p>
-      </header>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
         {/* Video Player Section */}
         <div className="lg:col-span-8 xl:col-span-9 order-2 lg:order-1">
@@ -95,6 +87,8 @@ export default function Home() {
             onSelectFile={selectFile}
             isLoading={isLoadingFiles}
             error={filesError}
+            isOpen={isFileListOpen}
+            onOpenChange={setIsFileListOpen}
           />
         </div>
       </div>
