@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { type VideoPlayerProps, type MediaMetadata } from '@/types';
 import { apiClient } from '@/lib/api';
 import { cn, formatDuration } from '@/lib/utils';
@@ -116,6 +116,13 @@ function VolumeControl({
         className="relative flex items-center"
         onMouseEnter={() => setShowSlider(true)}
         onMouseLeave={() => setShowSlider(false)}
+        onFocus={() => setShowSlider(true)}
+        onBlur={(e) => {
+          // Only hide if focus is leaving the entire component
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setShowSlider(false);
+          }
+        }}
       >
         <Tooltip>
           <TooltipTrigger asChild>
@@ -147,6 +154,7 @@ function VolumeControl({
               step={5}
               className="w-24"
               orientation="horizontal"
+              aria-label="Volume"
             />
           </div>
         )}
@@ -321,7 +329,10 @@ export default function VideoPlayer({
   
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const streamUrl = filename ? apiClient.getStreamUrl(filename) : null;
+  const streamUrl = useMemo(() => 
+    filename ? apiClient.getStreamUrl(filename) : null, 
+    [filename]
+  );
 
   const toggleFullscreen = useCallback(() => {
     if (!containerRef.current) return;

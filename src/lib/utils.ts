@@ -76,7 +76,16 @@ export function truncateFilename(filename: string, maxLength: number = 40): stri
   
   const ext = filename.split('.').pop() || '';
   const name = filename.slice(0, filename.length - ext.length - 1);
-  const truncatedName = name.slice(0, maxLength - ext.length - 4) + '...';
   
+  // Ensure we have enough room for at least some characters + "..." + extension
+  const minNameLength = 3;
+  const availableSpace = maxLength - ext.length - 4; // 4 = "..." + "."
+  
+  if (availableSpace < minNameLength) {
+    // If extension is too long, just truncate the whole filename
+    return filename.slice(0, maxLength - 3) + '...';
+  }
+  
+  const truncatedName = name.slice(0, availableSpace) + '...';
   return `${truncatedName}.${ext}`;
 }
