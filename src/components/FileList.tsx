@@ -50,10 +50,11 @@ function FileItem({
   const extensionColor = getExtensionColor(extension);
 
   return (
-    <button
+    <Button
+      variant={isSelected ? "default" : "ghost"}
       onClick={onSelect}
       className={cn(
-        "w-full p-3 rounded-lg transition-all duration-200 text-left",
+        "w-full h-auto p-3 rounded-lg transition-all duration-200 text-left justify-start",
         "flex items-center gap-3 group border",
         isSelected 
           ? "bg-primary text-primary-foreground border-primary" 
@@ -103,7 +104,7 @@ function FileItem({
       )}>
         {isSelected && <Check className="h-3 w-3 text-primary" />}
       </div>
-    </button>
+    </Button>
   );
 }
 
